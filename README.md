@@ -15,7 +15,7 @@
 2. Create below streams in KSQLDB:
 
     ```
-    CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar comments varchar) WITH             (KAFKA_TOPIC='customers', VALUE_FORMAT='json');
+    CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar, comments varchar) WITH             (KAFKA_TOPIC='customers', VALUE_FORMAT='json');
 
     CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;
     ```
@@ -23,7 +23,7 @@
     Stream to read DLQ headers
     
     ```
-    CREATE STREAM dlq_headers (headers ARRAY<STRUCT<key STRING, value BYTES>> HEADERS) WITH (KAFKA_TOPIC='customers-dlq', VALUE_FORMAT='json');
+    CREATE STREAM DLQ_HEADERS (HEADERS ARRAY<STRUCT<KEY STRING, VALUE BYTES>> HEADERS) WITH (KAFKA_TOPIC='CUSTOMERS-DLQ', VALUE_FORMAT='JSON');
     ```
 
 3. Insert below data into Kafka topic: `customers`
