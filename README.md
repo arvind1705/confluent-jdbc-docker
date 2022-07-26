@@ -13,7 +13,7 @@
 
 2. Create below streams in KSQLDB:
 
-    ```CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar, comments varchar) WITH (KAFKA_TOPIC='customers', VALUE_FORMAT='json');```
+    ```CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar comments varchar) WITH (KAFKA_TOPIC='customers', VALUE_FORMAT='json');```
 
     ```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;```
 
@@ -35,38 +35,11 @@
       ```
 (Update Id's and other values insert more data as needed.)
 
-4. Setup JDBC Connector in Kafka Connect in control center:
+4. Upload sample_sink_connector.json (file in repo) connnector config in Kafka Connect page in control center. 
 
-```
-{
-  "name": "JdbcSinkConnectorConnector_0",
-  "config": {
-    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
-    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-    "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
-    "errors.tolerance": "all",
-    "errors.log.enable": "true",
-    "errors.log.include.messages": "true",
-    "topics": "customers-jsonsr",
-    "errors.deadletterqueue.topic.name": "customers-dlq",
-    "errors.deadletterqueue.context.headers.enable": "true",
-    "connection.url": "jdbc:postgresql://postgres:5432/postgres",
-    "connection.user": "connect_user",
-    "connection.password": "asgard",
-    "dialect.name": "PostgreSqlDatabaseDialect",
-    "table.name.format": "test.customers",
-    "auto.create": "false",
-    "auto.evolve": "false",
-    "quote.sql.identifiers": "never",
-    "key.converter.schemas.enable": "false",
-    "value.converter.schema.registry.url": "http://schema-registry:8081",
-    "value.converter.schemas.enable": "false"
-  }
-}
+Execute curl command to check connector status
+```curl http://127.0.0.1:8083/connectors/sample_sink_connector/status```
 
-```
-Visit the connect url to check status 
-```http://localhost:8083/connectors/JdbcSinkConnectorConnector_0/status/```
 
 
 
@@ -84,9 +57,18 @@ Visit the connect url to check status
 
 # Steps to simulate error in Kafka Connect to check DLQ headers:
 
-1. Execute below stream. It'll fail to insert data into db as pincode column is not present in DB 
+1. Insert below sample data directly into Kafka topic: `customers-jsonsr`. Data won't be inserted into database because of serialization error and data will be inserted into DLQ topic.
 
-```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments, '560010' as pincode from customer_raw emit changes;```
+```
+      {
+          "id": 1,
+          "first_name": "Aravind",
+          "last_name": "G",
+          "email": "g@arvind1705.com",
+          "gender": "Male",
+          "comments": "Hello World"
+      }
+```
 
 2. Read DLQ header data in dlq stream:
 

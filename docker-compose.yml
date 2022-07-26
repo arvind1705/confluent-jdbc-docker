@@ -74,7 +74,7 @@ services:
       - -c
       - |
         echo "Installing Connector"
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.2.6
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
         confluent-hub install --no-prompt confluentinc/kafka-connect-json-schema-converter:latest
         #
         echo "Launching Kafka Connect worker"
