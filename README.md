@@ -5,7 +5,6 @@
 2. Wait till entire stack is up and running
 3. Visit the Confluent Control Center at ```http://localhost:9021/```
 
-
 # Steps to test Confluent JDBC
 1. Create these topics in control center:
     - topic: `customers`
@@ -66,15 +65,21 @@
 }
 
 ```
-2. Visit the connect url to check status 
+Visit the connect url to check status 
 ```http://localhost:8083/connectors/JdbcSinkConnectorConnector_0/status/```
 
+
+
 # Steps to check data in database:
+
 1. Run below command in Postgresql:
 
     ``` docker-compose exec postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB' ```
     
     ``` "SELECT * FROM test.customers" ```
+    
+2. Use same psql terminal to run other database commands. 
+3. Check setup.sql file in postgres folder to run db commands while starting Confluent stack.
 
 
 # Steps to simualate error in Kafka Connect to check DLQ headers:
