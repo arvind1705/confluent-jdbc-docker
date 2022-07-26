@@ -19,6 +19,7 @@
     ```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;```
 
     Stream to read DLQ headers
+    
     ```CREATE STREAM dlq_headers (headers ARRAY<STRUCT<key STRING, value BYTES>> HEADERS) WITH (KAFKA_TOPIC='customers-dlq', VALUE_FORMAT='json');```
 
 3. Insert below data into Kafka topic: `customers`
@@ -70,13 +71,16 @@
 
 # Steps to check data in database:
 1. Run below command in Postgresql:
+
     ``` docker-compose exec postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB' ```
+    
     ``` "SELECT * FROM test.customers" ```
 
 
 # Steps to simualate error in Kafka Connect to check DLQ headers:
 
 1. Execute below stream. It'll fail to insert data into db as pincode column is not present in DB 
+
 ```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments, "560010" as pincode from customer_raw emit changes;```
 
 2. Read DLQ header data in dlq stream:
