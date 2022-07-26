@@ -7,6 +7,7 @@
 
 # Steps to test Confluent JDBC
 1. Create these topics in control center:
+
     - topic: `customers`
     - topic: `customers-dlq`
     - topic: `customers-jsonsr` 
@@ -28,19 +29,18 @@
           "id": 1,
           "first_name": "Aravind",
           "last_name": "G",
-          "email": "g@arvind1705.com",
+          "email": "g.aravind@test.com",
           "gender": "Male",
-          "comments": "Hellow World"
+          "comments": "Hello World"
       }
       ```
-(Update Id's and other values insert more data as needed.)
+(Update Ids and other values insert more data as needed.)
 
 4. Upload sample_sink_connector.json (file in repo) connnector config in Kafka Connect page in control center. 
 
 Execute curl command to check connector status
+
 ```curl http://127.0.0.1:8083/connectors/sample_sink_connector/status```
-
-
 
 
 # Steps to check data in database:
@@ -55,7 +55,7 @@ Execute curl command to check connector status
 3. Check setup.sql file in postgres folder to run db commands while starting Confluent stack.
 
 
-# Steps to simulate error in Kafka Connect to check DLQ headers:
+# Steps to simulate error in Kafka Connect and insert data into DLQ:
 
 1. Insert below sample data directly into Kafka topic: `customers-jsonsr`. Data won't be inserted into database because of serialization error and data will be inserted into DLQ topic.
 
@@ -64,7 +64,7 @@ Execute curl command to check connector status
           "id": 1,
           "first_name": "Aravind",
           "last_name": "G",
-          "email": "g@arvind1705.com",
+          "email": "g.aravind@test.com",
           "gender": "Male",
           "comments": "Hello World"
       }
@@ -74,5 +74,4 @@ Execute curl command to check connector status
 
 ```
 select FROM_BYTES(HEADERS[1]-> value, 'ascii') as source_topic, FROM_BYTES(HEADERS[2]-> value, 'ascii') as partition_num, FROM_BYTES(HEADERS[3]-> value, 'ascii') as partition_offset, FROM_BYTES(HEADERS[4]-> value, 'ascii') as connector_name, FROM_BYTES(HEADERS[5]-> value, 'ascii') as errors_stage, FROM_BYTES(HEADERS[6]-> value, 'ascii') as class_name, FROM_BYTES(HEADERS[7]-> value, 'ascii') as exception_class_name,FROM_BYTES(HEADERS[8]-> value, 'ascii') as exception_message, FROM_BYTES(HEADERS[9]-> value, 'ascii') as exception_stacktrace from DLQ_HEADERS emit changes;
-
 ```
