@@ -82,7 +82,7 @@ Visit the connect url to check status
 3. Check setup.sql file in postgres folder to run db commands while starting Confluent stack.
 
 
-# Steps to simualate error in Kafka Connect to check DLQ headers:
+# Steps to simulate error in Kafka Connect to check DLQ headers:
 
 1. Execute below stream. It'll fail to insert data into db as pincode column is not present in DB 
 
