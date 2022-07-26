@@ -13,7 +13,7 @@
 
 2. Create below streams in KSQLDB:
 
-    ```CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar comments varchar) WITH (KAFKA_TOPIC='customers', VALUE_FORMAT='json');```
+    ```CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar, comments varchar) WITH (KAFKA_TOPIC='customers', VALUE_FORMAT='json');```
 
     ```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;```
 
@@ -86,7 +86,7 @@ Visit the connect url to check status
 
 1. Execute below stream. It'll fail to insert data into db as pincode column is not present in DB 
 
-```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments, "560010" as pincode from customer_raw emit changes;```
+```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments, '560010' as pincode from customer_raw emit changes;```
 
 2. Read DLQ header data in dlq stream:
 
