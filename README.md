@@ -14,13 +14,17 @@
 
 2. Create below streams in KSQLDB:
 
-    ```CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar comments varchar) WITH (KAFKA_TOPIC='customers', VALUE_FORMAT='json');```
+    ```
+    CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar comments varchar) WITH             (KAFKA_TOPIC='customers', VALUE_FORMAT='json');
 
-    ```CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;```
+    CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;
+    ```
 
     Stream to read DLQ headers
     
-    ```CREATE STREAM dlq_headers (headers ARRAY<STRUCT<key STRING, value BYTES>> HEADERS) WITH (KAFKA_TOPIC='customers-dlq', VALUE_FORMAT='json');```
+    ```
+    CREATE STREAM dlq_headers (headers ARRAY<STRUCT<key STRING, value BYTES>> HEADERS) WITH (KAFKA_TOPIC='customers-dlq', VALUE_FORMAT='json');
+    ```
 
 3. Insert below data into Kafka topic: `customers`
 
@@ -45,11 +49,11 @@ Execute curl command to check connector status
 
 # Steps to check data in database:
 
-1. Run below command in Postgresql:
+1. Run below command in different bash terminal to view data in database:
 
     ``` docker-compose exec postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB' ```
     
-    ``` "SELECT * FROM test.customers" ```
+    ``` "SELECT * FROM test.customers;" ```
     
 2. Use same psql terminal to run other database commands. 
 3. Check setup.sql file in postgres folder to run db commands while starting Confluent stack.
@@ -57,7 +61,9 @@ Execute curl command to check connector status
 
 # Steps to simulate error in Kafka Connect and insert data into DLQ:
 
-1. Insert below sample data directly into Kafka topic: `customers-jsonsr`. Data won't be inserted into database because of serialization error and data will be inserted into DLQ topic.
+1. Insert below sample data directly into Kafka topic: `customers-jsonsr`. 
+
+Data won't be inserted into database because of serialization error and data will be inserted into DLQ topic.
 
 ```
       {
