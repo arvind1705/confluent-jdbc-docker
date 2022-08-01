@@ -1,0 +1,25 @@
+{
+    "name": "sample_sink_connector",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+        "errors.tolerance": "all",
+        "errors.log.enable": "true",
+        "errors.log.include.messages": "true",
+        "topics": "customers-jsonsr",
+        "errors.deadletterqueue.topic.name": "customers-dlq",
+        "errors.deadletterqueue.context.headers.enable": "true",
+        "connection.url": "jdbc:postgresql://postgres:5432/postgres",
+        "connection.user": "connect_user",
+        "connection.password": "asgard",
+        "dialect.name": "PostgreSqlDatabaseDialect",
+        "table.name.format": "test.customers",
+        "auto.create": "false",
+        "auto.evolve": "false",
+        "quote.sql.identifiers": "never",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "value.converter.schemas.enable": "false"
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "name": "sample_source_connector",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+        "errors.tolerance": "all",
+        "errors.log.enable": "true",
+        "connection.url": "jdbc:postgresql://postgres:5432/postgres",
+        "connection.user": "connect_user",
+        "connection.password": "asgard",
+        "dialect.name": "PostgreSqlDatabaseDialect",
+        "table.whitelist": "test.employees",
+        "auto.create": "false",
+        "auto.evolve": "false",
+        "quote.sql.identifiers": "never",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "value.converter.schemas.enable": "false",
+        "transforms": "renameTopic",
+        "transforms.renameTopic.type": "org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.renameTopic.regex": ".*",
+        "transforms.renameTopic.replacement": "employees",
+        "validate.non.null": "false",
+        "mode": "timestamp",
+        "timestamp.column.name": "update_ts",
+        "batch.max.rows": 100,
+        "poll.interval.ms": 3000
+    }
+}

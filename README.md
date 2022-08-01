@@ -81,3 +81,16 @@ Data won't be inserted into database because of serialization error and data wil
 ```
 select FROM_BYTES(HEADERS[1]-> value, 'ascii') as source_topic, FROM_BYTES(HEADERS[2]-> value, 'ascii') as partition_num, FROM_BYTES(HEADERS[3]-> value, 'ascii') as partition_offset, FROM_BYTES(HEADERS[4]-> value, 'ascii') as connector_name, FROM_BYTES(HEADERS[5]-> value, 'ascii') as errors_stage, FROM_BYTES(HEADERS[6]-> value, 'ascii') as class_name, FROM_BYTES(HEADERS[7]-> value, 'ascii') as exception_class_name,FROM_BYTES(HEADERS[8]-> value, 'ascii') as exception_message, FROM_BYTES(HEADERS[9]-> value, 'ascii') as exception_stacktrace from DLQ_HEADERS emit changes;
 ```
+
+
+# Query to test source connector:
+
+```
+select count(*) from test.employees;
+
+truncate TABLE test.employees restart identity;
+
+SELECT insert_record() FROM GENERATE_SERIES(1, 10);
+
+select * from test.employees;
+```
