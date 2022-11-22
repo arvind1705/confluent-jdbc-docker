@@ -11,31 +11,42 @@
     - topic: `customers`
     - topic: `customers-dlq`
     - topic: `customers-jsonsr` 
+    - topic: `employees`
 
 2. Create below streams in KSQLDB:
 
     ```
-    CREATE STREAM customer_raw (id int, first_name varchar, last_name varchar, email varchar, gender varchar, comments varchar) WITH             (KAFKA_TOPIC='customers', VALUE_FORMAT='json');
-
-    CREATE STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS SELECT id,  first_name, last_name, email, gender, comments from customer_raw emit changes;
+        CREATE OR REPLACE STREAM CUSTOMER_RAW (ID INTEGER, NAME STRUCT<FIRST_NAME STRING, LAST_NAME STRING>, EMAIL STRING, GENDER           STRING, COMMENTS STRING) WITH (KAFKA_TOPIC='customers', KEY_FORMAT='KAFKA', VALUE_FORMAT='JSON');
+    ```
+    
+    ```
+        CREATE or replace STREAM customer_jsonsr WITH (KAFKA_TOPIC='customers-jsonsr', VALUE_FORMAT='JSON_SR') AS 
+        SELECT id,  
+        name->first_name as first_name, 
+        name->last_name as last_name,
+        email, 
+        gender, 
+        comments from customer_raw emit changes;
     ```
 
     Stream to read DLQ headers
     
     ```
-    CREATE STREAM DLQ_HEADERS (HEADERS ARRAY<STRUCT<KEY STRING, VALUE BYTES>> HEADERS) WITH (KAFKA_TOPIC='CUSTOMERS-DLQ', VALUE_FORMAT='JSON');
+        CREATE STREAM DLQ_HEADERS (HEADERS ARRAY<STRUCT<KEY STRING, VALUE BYTES>> HEADERS) WITH (KAFKA_TOPIC='CUSTOMERS-DLQ',               VALUE_FORMAT='JSON');
     ```
 
 3. Insert below data into Kafka topic: `customers`
 
       ```
       {
-          "id": 1,
-          "first_name": "Aravind",
-          "last_name": "G",
-          "email": "g.aravind@test.com",
-          "gender": "Male",
-          "comments": "Hello World"
+      	"id": 1,
+      	"name": {
+      		"first_name": "Aravind",
+      		"last_name": "G"
+      	},
+      	"email": "g.aravind@test.com",
+      	"gender": "Male",
+      	"comments": "Hello World"
       }
       ```
 (Update Ids and other values insert more data as needed.)
